@@ -1,7 +1,10 @@
 const express = require('express');
 const fs = require('fs');
+const moragn = require('morgan')
 
 const app = express();
+
+app.use(moragn('dev'))
 
 app.use(express.json());
 
@@ -9,13 +12,45 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-const getAllTour = (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
     data: {
       tours,
     },
+  });
+}
+
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message:"This route is not defined yet"
+  });
+}
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message:"This route is not defined yet"
+  });
+}
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message:"This route is not defined yet"
+  });
+}
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message:"This route is not defined yet"
+  });
+}
+
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message:"This route is not defined yet"
   });
 }
 
@@ -91,7 +126,7 @@ const deleteTour = (req, res) => {
 }
 
 // GET TOURS
-app.get('/api/v1/tours', getAllTour);
+app.get('/api/v1/tours', getAllTours);
 
 // CREATE TOURS
 app.post('/api/v1/tours', createTour);
@@ -107,9 +142,22 @@ app.patch('/api/v1/tours/:id', updateTour)
 // DLETE TOUR
 app.delete('/api/v1/tours/:id', deleteTour)
 
-app.route('/api/v1/tours').get(getAllTour).post(createTour)
 
-app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour)
+
+const userRouter = express.Router()
+const tourRouter = express.Router()
+
+
+tourRouter.route('/').get(getAllTours).post(createTour)
+
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour)
+
+userRouter.route('/').get(getAllUsers).post(createUser)
+
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser)
+
+app.use('/api/v1/tours', tourRouter)
+app.use('/api/v1/users', userRouter)
 
 const port = 3000;
 app.listen(port, () => {
